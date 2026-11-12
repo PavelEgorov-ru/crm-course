@@ -1,0 +1,68 @@
+settings:
+  content:
+    merge: true
+
+media:
+  - name: article_images
+    label: Картинки
+    input: public/images
+    output: /crm-course/images
+    extensions: [png, jpg, jpeg, webp, gif]
+    rename: true
+
+content:
+  - name: articles
+    label: Статьи
+    type: collection
+    path: src/content/docs/articles
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    subfolders: false
+    exclude: [.gitkeep]
+    view:
+      primary: title
+    fields:
+      - name: title
+        label: Заголовок
+        type: string
+        required: true
+      - name: description
+        label: Краткое описание
+        type: text
+      - name: sidebar
+        label: Положение в меню
+        type: object
+        fields:
+          - name: order
+            label: Порядок (меньшее число — выше)
+            type: number
+            options:
+              min: 1
+      - name: body
+        label: Текст статьи
+        type: rich-text
+        options:
+          format: markdown
+          media: article_images
+          switcher: false
+
+  - name: about
+    label: О проекте
+    type: file
+    path: src/content/docs/about.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: Заголовок
+        type: string
+        required: true
+      - name: description
+        label: Краткое описание
+        type: text
+      - name: body
+        label: Текст страницы
+        type: rich-text
+        options:
+          format: markdown
+          media: article_images
+          switcher: false

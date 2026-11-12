@@ -24,6 +24,7 @@ export default defineConfig({
 					{ label: 'Главная', slug: '' },
 					{ label: 'О проекте', slug: 'about' },
 				] },
+				{ label: 'Статьи', items: [{ autogenerate: { directory: 'articles' } }] },
 				{ label: 'Демонстрация', items: [
 					{ label: 'Образец страницы', slug: 'preview' },
 				] },

@@ -4,6 +4,7 @@
 - Confirm the authenticated GitHub identity before any write. Use the saved `PavelEgorov-ru` credential only in the current process; do not change the globally active CLI account.
 - Never print tokens or save credentials in project files.
 - Keep this as a public static learning site, with optional external donations. No accounts or paywalls.
+- Author editing uses Pages CMS (`.pages.yml`) with the owner's personal GitHub account; this does not introduce reader accounts. Keep MDX component pages outside the rich-text collection. Ordinary articles live in `src/content/docs/articles/`, with images under `public/images/` and `/crm-course/images/` public URLs.
 - The current pages demonstrate the website. Write course articles only when the user requests their content.
 - The user chose Kanri's documentation layout as the visual reference. Prefer standard Starlight navigation and neutral backgrounds with purple accents.
 
