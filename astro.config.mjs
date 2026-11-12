@@ -13,6 +13,7 @@ export default defineConfig({
 			defaultLocale: 'root',
 			locales: { root: { label: 'Русский', lang: 'ru' } },
 			customCss: ['./src/styles/custom.css'],
+			components: { MarkdownContent: './src/components/ArticleContent.astro' },
 			logo: { src: './public/favicon.svg' },
 			favicon: '/favicon.svg',
 			social: [{ icon: 'github', label: 'Репозиторий проекта', href: 'https://github.com/PavelEgorov-ru/crm-course' }],

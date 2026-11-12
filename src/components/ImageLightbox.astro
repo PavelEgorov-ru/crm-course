@@ -1,0 +1,142 @@
+<dialog class="image-lightbox" aria-label="Изображение на весь экран" data-image-lightbox>
+  <button class="close" type="button" aria-label="Закрыть изображение" autofocus>
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="m6 6 12 12M18 6 6 18" />
+    </svg>
+  </button>
+  <img class="full-image" alt="" decoding="async" />
+</dialog>
+
+<script>
+  function setupImageLightbox() {
+    const dialog = document.querySelector<HTMLDialogElement>('[data-image-lightbox]');
+    if (!dialog || dialog.dataset.ready) return;
+    const fullImage = dialog.querySelector<HTMLImageElement>('.full-image');
+    const closeButton = dialog.querySelector<HTMLButtonElement>('.close');
+    if (!fullImage || !closeButton) return;
+    dialog.dataset.ready = 'true';
+
+    let trigger: HTMLButtonElement | null = null;
+    let previousOverflow = '';
+
+    document.querySelectorAll<HTMLImageElement>('.sl-markdown-content img').forEach((image) => {
+      // Keep linked images and interactive components working as authored.
+      if (image.closest('a, button, [role="button"], [data-no-lightbox]')) return;
+      const target = image.closest('picture') || image;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'image-zoom';
+      button.title = 'Увеличить изображение';
+      button.setAttribute('aria-haspopup', 'dialog');
+      button.setAttribute('aria-label', image.alt
+        ? `Открыть изображение на весь экран: ${image.alt}`
+        : 'Открыть изображение на весь экран');
+      target.before(button);
+      button.append(target);
+      button.addEventListener('click', () => {
+        if (dialog.open) return;
+        trigger = button;
+        fullImage.src = image.currentSrc || image.src;
+        fullImage.alt = image.alt;
+        previousOverflow = document.documentElement.style.overflow;
+        document.documentElement.style.overflow = 'hidden';
+        dialog.showModal();
+      });
+    });
+
+    closeButton.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = previousOverflow;
+      if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+      fullImage.removeAttribute('src');
+    });
+    document.addEventListener('astro:before-swap', () => {
+      if (dialog.open) dialog.close();
+    }, { once: true });
+  }
+
+  setupImageLightbox();
+  document.addEventListener('astro:page-load', setupImageLightbox);
+</script>
+
+<style>
+  :global(.sl-markdown-content .image-zoom) {
+    display: inline-flex;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: .25rem;
+    background: transparent;
+    line-height: 0;
+    vertical-align: middle;
+    cursor: zoom-in;
+  }
+
+  :global(.sl-markdown-content .image-zoom img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  :global(.sl-markdown-content .image-zoom:focus-visible) {
+    outline: 3px solid var(--sl-color-text-accent);
+    outline-offset: 4px;
+  }
+
+  .image-lightbox {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: calc(4rem + env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    border: 0;
+    background: rgb(10 10 15 / 94%);
+    color: white;
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  .image-lightbox[open] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-lightbox::backdrop { background: transparent; }
+
+  .full-image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .close {
+    position: absolute;
+    top: max(.75rem, env(safe-area-inset-top));
+    right: max(.75rem, env(safe-area-inset-right));
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 35%);
+    border-radius: 50%;
+    background: #242429;
+    color: white;
+    cursor: pointer;
+  }
+
+  .close:hover { background: #414149; }
+  .close:focus-visible { outline: 3px solid #d6baff; outline-offset: 3px; }
+</style>
