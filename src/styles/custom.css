@@ -1,0 +1,37 @@
+/* Neutral documentation layout inspired by the Kanri reference. */
+:root {
+  --sl-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  --sl-nav-height: 4rem;
+  --sl-sidebar-width: 18.75rem;
+  --sl-content-width: 45rem;
+  --sl-text-h1: 2.625rem;
+  --sl-color-black: #111112;
+  --sl-color-gray-6: #1b1b1d;
+  --sl-color-text-accent: #ab7be9;
+  --sl-color-text-invert: #f1f5f9;
+  --sl-color-bg-accent: #7d36db;
+  --sl-color-accent-low: #281b3e;
+  --sl-color-accent: #a472e5;
+  --sl-color-accent-high: #d6baff;
+  --sl-color-bg-sidebar: var(--sl-color-black);
+}
+
+:root[data-theme='light'] {
+  --sl-color-black: #f0eff3;
+  --sl-color-gray-6: #d8d8d8;
+  --sl-color-gray-7: #eeeeee;
+  --sl-color-text-accent: #6c26c8;
+  --sl-color-text-invert: #f1f5f9;
+  --sl-color-bg-accent: #6c26c8;
+  --sl-color-accent-low: #e8dcf7;
+  --sl-color-accent: #7d36db;
+  --sl-color-accent-high: #54209a;
+  --sl-color-bg-sidebar: var(--sl-color-black);
+}
+
+.site-title { color: var(--sl-color-white); font-weight: 600; }
+.site-title img { width: 1.8rem; height: 1.8rem; }
+.sidebar-content a[aria-current='page'] { border-radius: .25rem; background: var(--sl-color-bg-accent); }
+.sl-markdown-content a { text-underline-offset: .15em; }
+.sl-markdown-content :is(input, select, button) { font-family: inherit; }
+@media (max-width: 50rem) { :root { --sl-text-h1: 2.1875rem; } }

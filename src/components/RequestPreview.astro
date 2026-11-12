@@ -1,0 +1,332 @@
+---
+const initialName = 'Алексей Примеров';
+const initialExample = JSON.stringify({ name: initialName, channel: 'email' }, null, 2);
+---
+
+<crm-request-preview class="request-preview">
+  <div class="preview-intro">
+    <span class="preview-eyebrow">Интерактивный образец</span>
+    <h3>Попробуйте изменить данные</h3>
+  </div>
+
+  <div class="preview-workspace">
+    <form class="preview-form">
+      <fieldset disabled>
+      <label>
+        <span>Вымышленное имя</span>
+        <input
+          type="text"
+          name="demo-name"
+          value={initialName}
+          maxlength="80"
+          autocomplete="off"
+          spellcheck="false"
+          required
+        />
+      </label>
+      <label>
+        <span>Канал</span>
+        <select name="demo-channel">
+          <option value="email">Email</option>
+          <option value="sms">SMS</option>
+        </select>
+      </label>
+      <div class="preview-actions">
+        <button type="submit" class="preview-submit">Собрать пример <span aria-hidden="true">↗</span></button>
+        <button type="reset" class="preview-reset">Сбросить</button>
+      </div>
+      </fieldset>
+      <noscript>Для интерактивного примера нужен JavaScript.</noscript>
+    </form>
+
+    <div class="preview-result">
+      <div class="preview-result-heading">
+        <span>Результат</span>
+        <span class="preview-format">JSON</span>
+      </div>
+      <pre tabindex="0" aria-label="Получившийся JSON"><code data-output>{initialExample}</code></pre>
+      <p class="preview-status" data-status role="status" aria-live="polite" aria-atomic="true">Показаны исходные значения.</p>
+    </div>
+  </div>
+
+  <p class="preview-note"><span aria-hidden="true">◉</span> Демонстрация: данные никуда не отправляются.</p>
+</crm-request-preview>
+
+<script>
+  class CrmRequestPreview extends HTMLElement {
+    connectedCallback() {
+      if (this.dataset.initialized === 'true') return;
+
+      const form = this.querySelector('form');
+      const fieldset = this.querySelector('fieldset');
+      const nameInput = this.querySelector<HTMLInputElement>('input[name="demo-name"]');
+      const channelInput = this.querySelector<HTMLSelectElement>('select[name="demo-channel"]');
+      const output = this.querySelector<HTMLElement>('[data-output]');
+      const status = this.querySelector<HTMLElement>('[data-status]');
+
+      if (!form || !fieldset || !nameInput || !channelInput || !output || !status) return;
+      this.dataset.initialized = 'true';
+
+      const render = (message: string) => {
+        output.textContent = JSON.stringify(
+          { name: nameInput.value.trim(), channel: channelInput.value },
+          null,
+          2,
+        );
+        status.textContent = message;
+      };
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        render('Пример обновлён. Данные остались в браузере.');
+      });
+
+      form.addEventListener('reset', (event) => {
+        event.preventDefault();
+        nameInput.value = nameInput.defaultValue;
+        channelInput.selectedIndex = 0;
+        render('Исходные значения восстановлены.');
+      });
+
+      fieldset.disabled = false;
+    }
+  }
+
+  if (!customElements.get('crm-request-preview')) {
+    customElements.define('crm-request-preview', CrmRequestPreview);
+  }
+</script>
+
+<style>
+  .request-preview {
+    display: block;
+    margin-block: 1.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-text);
+  }
+
+  .preview-intro {
+    padding: 1.5rem 1.5rem 0;
+  }
+
+  .preview-eyebrow {
+    color: var(--sl-color-text-accent);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .preview-intro h3 {
+    margin: 0.4rem 0 0.5rem;
+    color: var(--sl-color-white);
+    font-size: clamp(1.25rem, 2.5vw, 1.55rem);
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+  }
+
+  .preview-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 1.5rem;
+    margin: 0;
+    padding: 1.5rem;
+  }
+
+  .preview-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .preview-form fieldset {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1rem;
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .preview-form noscript {
+    color: var(--sl-color-gray-3);
+    font-size: 0.75rem;
+  }
+
+  .preview-form label {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .preview-form input,
+  .preview-form select {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 2.8rem;
+    margin: 0;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.375rem;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-text);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+
+  .preview-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+    margin: auto 0 0;
+    padding-top: 0.25rem;
+  }
+
+  .preview-actions button {
+    min-height: 2.75rem;
+    margin: 0;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+    cursor: pointer;
+  }
+
+  .preview-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--sl-color-bg-accent);
+    color: #fff;
+  }
+
+  .preview-submit:hover {
+    filter: brightness(1.1);
+  }
+
+  .preview-reset {
+    background: transparent;
+    color: var(--sl-color-gray-3);
+  }
+
+  .preview-reset:hover {
+    border-color: var(--sl-color-hairline-light);
+    color: var(--sl-color-white);
+  }
+
+  .preview-form input:focus-visible,
+  .preview-form select:focus-visible,
+  .preview-actions button:focus-visible,
+  .preview-result pre:focus-visible {
+    outline: 2px solid var(--sl-color-text-accent);
+    outline-offset: 3px;
+  }
+
+  .preview-result {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    margin: 0;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 0.5rem;
+    background: var(--sl-color-bg);
+    overflow: hidden;
+  }
+
+  .preview-result-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    color: var(--sl-color-gray-3);
+    font-size: 0.75rem;
+  }
+
+  .preview-format {
+    font-family: var(--sl-font-mono, ui-monospace, monospace);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+  }
+
+  .preview-result pre {
+    flex: 1;
+    margin: 0;
+    padding: 1rem;
+    background: transparent;
+    color: var(--sl-color-text);
+    font-size: 0.8125rem;
+    line-height: 1.8;
+    overflow: auto;
+  }
+
+  .preview-result code {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-family: var(--sl-font-mono, ui-monospace, monospace);
+  }
+
+  .preview-status {
+    min-height: 2.8em;
+    margin: 0;
+    padding: 0 1rem 0.75rem;
+    color: var(--sl-color-gray-3);
+    font-size: 0.6875rem;
+    line-height: 1.4;
+  }
+
+  .preview-note {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.9rem 1.5rem;
+    border-top: 1px solid var(--sl-color-hairline-light);
+    color: var(--sl-color-gray-3);
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .preview-note span {
+    color: var(--sl-color-text-accent);
+    font-size: 0.65rem;
+  }
+
+  @media (max-width: 40rem) {
+    .preview-intro {
+      padding: 1.15rem 1.15rem 0;
+    }
+
+    .preview-workspace {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.25rem;
+      padding: 1.15rem;
+    }
+
+    .preview-result pre {
+      min-height: 8rem;
+    }
+
+    .preview-note {
+      padding: 0.9rem 1.15rem;
+    }
+  }
+</style>
