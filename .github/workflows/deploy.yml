@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy review and pinned public site
 
 on:
   push:
-    branches: [main]
+    branches: [codex/drafts]
   workflow_dispatch:
 
 permissions:
@@ -14,15 +14,78 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  ASTRO_TELEMETRY_DISABLED: '1'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: withastro/action@v6
+      - name: Require an explicitly approved public commit
+        env:
+          PUBLIC_SITE_COMMIT: ${{ vars.PUBLIC_SITE_COMMIT }}
+        run: |
+          if [[ ! "$PUBLIC_SITE_COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+            echo 'PUBLIC_SITE_COMMIT must contain an approved full commit SHA. No fallback to main is allowed.' >&2
+            exit 1
+          fi
+
+      - name: Check out approved public source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ vars.PUBLIC_SITE_COMMIT }}
+          path: public-source
+          persist-credentials: false
+
+      - name: Check out working drafts
+        uses: actions/checkout@v7
+        with:
+          ref: codex/drafts
+          path: review-source
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
         with:
           node-version: '24'
-          package-manager: npm@12.0.2
+          cache: npm
+          cache-dependency-path: |
+            public-source/package-lock.json
+            review-source/package-lock.json
+
+      - name: Select npm version
+        run: npm install --global npm@12.0.2
+
+      - name: Build approved public site
+        working-directory: public-source
+        run: |
+          npm ci
+          npm run build
+          test -f dist/index.html
+          test -f dist/pagefind/pagefind.js
+
+      - name: Build site for review
+        working-directory: review-source
+        run: |
+          npm ci
+          npm run build:review
+          test -f dist-review/index.html
+          test -f dist-review/pagefind/pagefind.js
+
+      - name: Assemble both sites without changing the public build
+        run: |
+          if [[ -e public-source/dist/review ]]; then
+            echo 'The public build uses the reserved review path.' >&2
+            exit 1
+          fi
+          mkdir site-output
+          cp -a public-source/dist/. site-output/
+          mkdir site-output/review
+          cp -a review-source/dist-review/. site-output/review/
+          printf '%s\n' '{"publicCommit":"${{ vars.PUBLIC_SITE_COMMIT }}","reviewCommit":"'"$(git -C review-source rev-parse HEAD)"'"}' > site-output/review/build-info.json
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site-output
 
   deploy:
     needs: build

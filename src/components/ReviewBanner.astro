@@ -1,0 +1,24 @@
+---
+import Banner from '@astrojs/starlight/components/Banner.astro';
+---
+
+<div class="review-banner" data-pagefind-ignore>
+  <strong>Черновая версия для вычитки</strong>
+  <span>Материалы могут меняться. Публикация на основном сайте выполняется отдельно.</span>
+  <a href="https://pavelegorov-ru.github.io/crm-course/">Основной сайт</a>
+</div>
+<Banner />
+
+<style>
+  .review-banner {
+    padding: 0.8rem var(--sl-nav-pad-x);
+    background: var(--sl-color-accent-low);
+    border-bottom: 1px solid var(--sl-color-accent);
+    color: var(--sl-color-white);
+    text-align: center;
+    line-height: 1.5;
+  }
+  strong { display: block; }
+  span { margin-inline-end: 0.65rem; }
+  a { color: var(--sl-color-text-accent); white-space: nowrap; }
+</style>

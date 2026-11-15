@@ -8,6 +8,9 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "build:review": "node scripts/review.mjs build",
+    "dev:review": "node scripts/review.mjs dev",
+    "preview:review": "node scripts/review.mjs preview",
     "preview": "astro preview",
     "astro": "astro"
   },

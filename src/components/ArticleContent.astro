@@ -1,7 +1,11 @@
 ---
 import MarkdownContent from '@astrojs/starlight/components/MarkdownContent.astro';
 import ImageLightbox from './ImageLightbox.astro';
+import { rewriteReviewUrls } from '../utils/review-urls.mjs';
+
+const content = await Astro.slots.render('default');
+const renderedContent = import.meta.env.MODE === 'review' ? rewriteReviewUrls(content) : content;
 ---
 
-<MarkdownContent><slot /></MarkdownContent>
+<MarkdownContent><Fragment set:html={renderedContent} /></MarkdownContent>
 <ImageLightbox />

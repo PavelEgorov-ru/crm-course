@@ -12,7 +12,7 @@ media:
 
 content:
   - name: articles
-    label: Статьи
+    label: Статьи — черновая версия
     type: collection
     path: src/content/docs/articles
     format: yaml-frontmatter
@@ -47,7 +47,7 @@ content:
           switcher: false
 
   - name: about
-    label: О проекте
+    label: О проекте — черновая версия
     type: file
     path: src/content/docs/about.md
     format: yaml-frontmatter
