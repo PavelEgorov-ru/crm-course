@@ -11,58 +11,152 @@ media:
     rename: true
 
 content:
+  - name: start
+    label: Начало
+    type: group
+    items:
+      - name: home
+        label: Главная
+        type: file
+        path: src/content/docs/index.mdx
+        format: yaml-frontmatter
+        operations: { create: false, rename: false, delete: false }
+        fields:
+          - name: title
+            label: Заголовок
+            type: string
+            required: true
+            description: 'Начало → Главная. Черновая страница: https://pavelegorov-ru.github.io/crm-course/review/'
+          - name: description
+            label: Краткое описание
+            type: text
+          - name: body
+            label: Текст и компоненты главной страницы
+            type: code
+            description: 'Эта страница использует MDX: текст, импорты и компоненты. Обычные статьи создавайте в разделе «Статьи». Сохранение обновляет только черновую версию.'
+            options:
+              format: mdx
+
+      - name: about
+        label: О проекте
+        type: file
+        path: src/content/docs/about.md
+        format: yaml-frontmatter
+        operations: { create: false, rename: false, delete: false }
+        fields:
+          - name: title
+            label: Заголовок
+            type: string
+            required: true
+            description: 'Начало → О проекте. Черновая страница: https://pavelegorov-ru.github.io/crm-course/review/about/'
+          - name: description
+            label: Краткое описание
+            type: text
+          - name: body
+            label: Текст страницы «О проекте»
+            type: rich-text
+            description: 'Вы редактируете существующую страницу. Для новой статьи перейдите в раздел «Статьи». Сохранение обновляет только черновую версию.'
+            options:
+              format: markdown
+              media: article_images
+              switcher: false
+
   - name: articles
-    label: Статьи — черновая версия
+    label: Статьи
     type: collection
     path: src/content/docs/articles
     format: yaml-frontmatter
-    filename: "{primary}.md"
-    subfolders: false
+    filename:
+      template: "{primary}.md"
+      field: create
+    subfolders: true
     exclude: [.gitkeep]
     view:
+      layout: tree
       primary: title
+      fields: [title, sidebar.order, description]
+      sort: [sidebar.order, title]
+      default:
+        sort: sidebar.order
+        order: asc
     fields:
       - name: title
         label: Заголовок
         type: string
         required: true
+        description: 'Это отдельная страница раздела «Статьи». После сохранения она появится в меню чернового сайта; выбранная здесь папка задаёт вложенность внутри раздела.'
       - name: description
         label: Краткое описание
         type: text
       - name: sidebar
-        label: Положение в меню
+        label: Положение в разделе «Статьи»
         type: object
         fields:
           - name: order
-            label: Порядок (меньшее число — выше)
+            label: Порядок в меню
             type: number
+            description: 'Меньшее число — выше среди страниц одной папки. Если оставить пустым, сайт использует стандартную сортировку по названию.'
             options:
               min: 1
       - name: body
         label: Текст статьи
         type: rich-text
+        description: 'Для новой статьи нажмите «Add an entry» в списке «Статьи»; для существующей — её название или «Edit». Сохранение запускает обновление черновика. Публикация на основном сайте выполняется отдельно.'
         options:
           format: markdown
           media: article_images
           switcher: false
 
-  - name: about
-    label: О проекте — черновая версия
-    type: file
-    path: src/content/docs/about.md
-    format: yaml-frontmatter
-    fields:
-      - name: title
-        label: Заголовок
-        type: string
-        required: true
-      - name: description
-        label: Краткое описание
-        type: text
-      - name: body
-        label: Текст страницы
-        type: rich-text
-        options:
-          format: markdown
-          media: article_images
-          switcher: false
+  - name: demonstration
+    label: Демонстрация
+    type: group
+    items:
+      - name: preview
+        label: Образец страницы
+        type: file
+        path: src/content/docs/preview.mdx
+        format: yaml-frontmatter
+        operations: { create: false, rename: false, delete: false }
+        fields:
+          - name: title
+            label: Заголовок
+            type: string
+            required: true
+            description: 'Демонстрация → Образец страницы. Черновая страница: https://pavelegorov-ru.github.io/crm-course/review/preview/'
+          - name: description
+            label: Краткое описание
+            type: text
+          - name: body
+            label: Текст и интерактивные компоненты образца
+            type: code
+            description: 'Это демонстрация оформления с MDX-компонентами. Обычные статьи создавайте в разделе «Статьи». Сохранение обновляет только черновую версию.'
+            options:
+              format: mdx
+
+  - name: service
+    label: Служебные страницы
+    type: group
+    items:
+      - name: not-found
+        label: Страница не найдена — 404
+        type: file
+        path: src/content/docs/404.md
+        format: yaml-frontmatter
+        operations: { create: false, rename: false, delete: false }
+        fields:
+          - name: title
+            label: Заголовок
+            type: string
+            required: true
+            description: 'Служебная страница для несуществующих адресов. В обычном меню сайта не отображается.'
+          - name: description
+            label: Краткое описание
+            type: text
+          - name: body
+            label: Текст страницы ошибки
+            type: rich-text
+            description: 'Вы редактируете сообщение об отсутствующей странице, а не статью. Сохранение обновляет только черновую версию.'
+            options:
+              format: markdown
+              media: article_images
+              switcher: false
